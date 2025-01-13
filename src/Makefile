@@ -1,24 +1,25 @@
-# Variables
-CC = gcc
-CFLAGS = -Wall -Iexternal/cglm/include -I/usr/include/SDL2 -I/usr/include
-LDFLAGS = -lSDL2 -lGL -lGLEW -lm
-TARGET = test
+# Compiler and flags
+CXX = g++
+CXXFLAGS = -Wall -std=c++17 -I/usr/include/GLFW -I/usr/include/GL -I/usr/include/glm -Iexternal/cglm/include
 
-# Source files
-SRC = test.c shaders.h
+LIBS = -lGLEW -lGL -lGLU -lglfw
 
-# Object files
-OBJ = test.o
+SRC_DIR = core
+BUILD_DIR = build/$(SRC_DIR)
 
-# Rules
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
+
+TARGET = engine
+
 all: $(TARGET)
 
-$(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
+$(TARGET): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(TARGET) $(LIBS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET)
-
+	rm -rf $(BUILD_DIR) $(TARGET)
